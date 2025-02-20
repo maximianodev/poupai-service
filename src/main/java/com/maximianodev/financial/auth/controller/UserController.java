@@ -1,9 +1,9 @@
-package com.lmaximiano.financial.auth.controller;
+package com.maximianodev.financial.auth.controller;
 
-import com.lmaximiano.financial.auth.dto.GenericResponse;
-import com.lmaximiano.financial.auth.dto.UserDTO;
-import com.lmaximiano.financial.auth.exception.BadRequestException;
-import com.lmaximiano.financial.auth.service.AlfredService;
+import com.maximianodev.financial.auth.dto.GenericResponse;
+import com.maximianodev.financial.auth.dto.UserDTO;
+import com.maximianodev.financial.auth.exception.BadRequestException;
+import com.maximianodev.financial.auth.service.AlfredService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

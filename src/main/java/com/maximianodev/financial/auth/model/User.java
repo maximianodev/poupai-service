@@ -1,4 +1,4 @@
-package com.lmaximiano.financial.auth.model;
+package com.maximianodev.financial.auth.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

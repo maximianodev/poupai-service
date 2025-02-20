@@ -1,6 +1,6 @@
-package com.lmaximiano.financial.auth.repository;
+package com.maximianodev.financial.auth.repository;
 
-import com.lmaximiano.financial.auth.model.User;
+import com.maximianodev.financial.auth.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.lmaximiano.financial.auth.config;
+package com.maximianodev.financial.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

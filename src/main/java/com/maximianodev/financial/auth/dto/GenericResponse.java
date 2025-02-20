@@ -1,4 +1,4 @@
-package com.lmaximiano.financial.auth.dto;
+package com.maximianodev.financial.auth.dto;
 
 import lombok.Getter;
 

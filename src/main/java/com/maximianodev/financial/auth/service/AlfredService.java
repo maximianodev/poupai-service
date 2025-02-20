@@ -1,14 +1,14 @@
-package com.lmaximiano.financial.auth.service;
+package com.maximianodev.financial.auth.service;
 
-import com.lmaximiano.financial.auth.exception.BadRequestException;
-import com.lmaximiano.financial.auth.repository.UserRepository;
-import com.lmaximiano.financial.auth.dto.UserDTO;
-import com.lmaximiano.financial.auth.model.User;
+import com.maximianodev.financial.auth.exception.BadRequestException;
+import com.maximianodev.financial.auth.repository.UserRepository;
+import com.maximianodev.financial.auth.dto.UserDTO;
+import com.maximianodev.financial.auth.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.lmaximiano.financial.auth.utils.Constants.ERROR_BAD_REQUEST;
+import static com.maximianodev.financial.auth.utils.Constants.ERROR_BAD_REQUEST;
 
 @Service
 public class AlfredService {
@@ -19,6 +19,7 @@ public class AlfredService {
     if (userRepository.existsByEmail(userDTO.getEmail())) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
+
     User user = new User();
     user.setName(userDTO.getName());
     user.setEmail(userDTO.getEmail());
