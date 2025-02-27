@@ -1,6 +1,7 @@
 services:
-  db:
+  alfred:
     image: mysql:8.0
+    container_name: alfred
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: alfred

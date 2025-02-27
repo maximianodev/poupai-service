@@ -2,5 +2,5 @@ To start database locally, you need to have Docker installed. Then you can run t
 
 With git bash:
 ```bash
-./database.sh
+./docker-compose.sh
 ```

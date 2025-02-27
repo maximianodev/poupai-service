@@ -17,8 +17,9 @@ import static com.maximianodev.financial.auth.utils.Constants.ERROR_INVALID_PASS
 @Service
 public class AlfredService {
   @Autowired private UserRepository userRepository;
+  @Autowired private JwtService jwtService;
 
-  public void registerUser(UserDTO userDTO) throws BadRequestException {
+  public String registerUser(UserDTO userDTO) throws BadRequestException {
     this.fieldsValidator(userDTO);
 
     if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -28,10 +29,13 @@ public class AlfredService {
     User user = new User();
     user.setName(userDTO.getName());
     user.setEmail(userDTO.getEmail());
+
     String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.getPassword());
     user.setPassword(encryptedPassword);
 
     userRepository.save(user);
+
+    return jwtService.generateToken(user.getEmail());
   }
 
   private void fieldsValidator(UserDTO user) throws BadRequestException {
