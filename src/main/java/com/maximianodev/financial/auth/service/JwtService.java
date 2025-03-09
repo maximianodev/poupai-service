@@ -5,35 +5,21 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
 public class JwtService {
-  private final SecretKey secretKey;
-
-  public JwtService(@Value("${jwt.secret}") String secretKey) {
-    this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
-  }
+  @Value("${spring.jwt.secret}")
+  private String secretKey;
 
   public String generateToken(String subject) {
     return Jwts.builder()
         .subject(subject)
         .issuedAt(new Date())
         .expiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
-        .signWith(secretKey)
+        .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
         .compact();
-  }
-
-  public boolean validateUser(String token, String email) {
-    return Jwts.parser()
-        .verifyWith(secretKey)
-        .build()
-        .parseSignedClaims(token)
-        .getPayload()
-        .getSubject()
-        .equals(email);
   }
 }
