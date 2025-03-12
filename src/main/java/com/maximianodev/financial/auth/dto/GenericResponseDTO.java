@@ -5,11 +5,11 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class GenericResponse {
+public class GenericResponseDTO {
   private final LocalDateTime timestamp;
   private final String message;
 
-  public GenericResponse(String message) {
+  public GenericResponseDTO(String message) {
     this.timestamp = LocalDateTime.now();
     this.message = message;
   }

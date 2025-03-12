@@ -2,7 +2,7 @@ package com.maximianodev.financial.auth.config;
 
 import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERROR_GENERIC;
 
-import com.maximianodev.financial.auth.dto.GenericResponse;
+import com.maximianodev.financial.auth.dto.GenericResponseDTO;
 import com.maximianodev.financial.auth.exception.BadRequestException;
 import com.maximianodev.financial.auth.exception.InternalServerErrorException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,37 +16,37 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(BadRequestException.class)
-  public ResponseEntity<GenericResponse> handleBadRequestException(BadRequestException exception) {
-    GenericResponse errorResponse = new GenericResponse(exception.getMessage());
+  public ResponseEntity<GenericResponseDTO> handleBadRequestException(BadRequestException exception) {
+    GenericResponseDTO errorResponse = new GenericResponseDTO(exception.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
   @ExceptionHandler(ExpiredJwtException.class)
-  public ResponseEntity<GenericResponse> handleExpiredJwtException(ExpiredJwtException exception) {
-    GenericResponse errorResponse = new GenericResponse(exception.getMessage());
+  public ResponseEntity<GenericResponseDTO> handleExpiredJwtException(ExpiredJwtException exception) {
+    GenericResponseDTO errorResponse = new GenericResponseDTO(exception.getMessage());
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
   }
 
   @ExceptionHandler(JwtException.class)
-  public ResponseEntity<GenericResponse> handleJwtException(JwtException exception) {
-    GenericResponse errorResponse = new GenericResponse(exception.getMessage());
+  public ResponseEntity<GenericResponseDTO> handleJwtException(JwtException exception) {
+    GenericResponseDTO errorResponse = new GenericResponseDTO(exception.getMessage());
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
   }
 
   @ExceptionHandler(InternalServerErrorException.class)
-  public ResponseEntity<GenericResponse> handleInternalServerErrorException(
+  public ResponseEntity<GenericResponseDTO> handleInternalServerErrorException(
       InternalServerErrorException exception) {
-    GenericResponse errorResponse = new GenericResponse(exception.getMessage());
+    GenericResponseDTO errorResponse = new GenericResponseDTO(exception.getMessage());
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 
   @ExceptionHandler
-  public ResponseEntity<GenericResponse> handleInternalServerErrorException(Exception exception) {
-    GenericResponse errorResponse = new GenericResponse(ERROR_GENERIC);
+  public ResponseEntity<GenericResponseDTO> handleInternalServerErrorException(Exception exception) {
+    GenericResponseDTO errorResponse = new GenericResponseDTO(ERROR_GENERIC);
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }

@@ -3,7 +3,7 @@ package com.maximianodev.financial.auth.controller;
 import static com.maximianodev.financial.auth.utils.Constants.SuccessMessages.*;
 
 import com.maximianodev.financial.auth.dto.EmailDTO;
-import com.maximianodev.financial.auth.dto.GenericResponse;
+import com.maximianodev.financial.auth.dto.GenericResponseDTO;
 import com.maximianodev.financial.auth.dto.UserDTO;
 import com.maximianodev.financial.auth.dto.UserLoginDTO;
 import com.maximianodev.financial.auth.exception.BadRequestException;
@@ -27,41 +27,41 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<GenericResponse> register(@RequestBody UserDTO userDTO)
+  public ResponseEntity<GenericResponseDTO> register(@RequestBody UserDTO userDTO)
       throws BadRequestException {
     ResponseCookie cookie = authService.registerUser(userDTO);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(new GenericResponse(SUCCESS_USER_REGISTERED));
+        .body(new GenericResponseDTO(SUCCESS_USER_REGISTERED));
   }
 
   @PostMapping("/login")
-  public ResponseEntity<GenericResponse> login(@RequestBody UserLoginDTO userLoginDTO)
+  public ResponseEntity<GenericResponseDTO> login(@RequestBody UserLoginDTO userLoginDTO)
       throws BadRequestException {
     ResponseCookie cookie = authService.loginUser(userLoginDTO);
 
     return ResponseEntity.status(HttpStatus.OK)
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(new GenericResponse(SUCCESS_USER_LOGGED_IN));
+        .body(new GenericResponseDTO(SUCCESS_USER_LOGGED_IN));
   }
 
   @PostMapping("/logout")
-  public ResponseEntity<GenericResponse> logout() {
+  public ResponseEntity<GenericResponseDTO> logout() {
     ResponseCookie cookie = authService.logoutUser();
 
     return ResponseEntity.status(HttpStatus.OK)
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
         .header(HttpHeaders.LOCATION, "/")
-        .body(new GenericResponse(SUCCESS_USER_LOGGED_OUT));
+        .body(new GenericResponseDTO(SUCCESS_USER_LOGGED_OUT));
   }
 
   @PostMapping("/forgot-password")
-  public ResponseEntity<GenericResponse> forgotPassword(@RequestBody EmailDTO request)
+  public ResponseEntity<GenericResponseDTO> forgotPassword(@RequestBody EmailDTO request)
       throws BadRequestException {
     authService.forgotPassword(request);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new GenericResponse(SUCCESS_PASSWORD_RESET_LINK_SENT));
+        .body(new GenericResponseDTO(SUCCESS_PASSWORD_RESET_LINK_SENT));
   }
 }
