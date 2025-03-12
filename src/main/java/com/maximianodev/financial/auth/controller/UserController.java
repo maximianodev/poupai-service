@@ -1,21 +1,17 @@
 package com.maximianodev.financial.auth.controller;
 
+import static com.maximianodev.financial.auth.utils.Constants.Cookies.AUTH_COOKIE_NAME;
 import static com.maximianodev.financial.auth.utils.Constants.SuccessMessages.*;
+import static com.maximianodev.financial.auth.utils.Constants.SuccessMessages.SUCCESS_PASSWORD_RESET;
 
-import com.maximianodev.financial.auth.dto.EmailDTO;
-import com.maximianodev.financial.auth.dto.GenericResponseDTO;
-import com.maximianodev.financial.auth.dto.UserDTO;
-import com.maximianodev.financial.auth.dto.UserLoginDTO;
+import com.maximianodev.financial.auth.dto.*;
 import com.maximianodev.financial.auth.exception.BadRequestException;
 import com.maximianodev.financial.auth.service.AuthService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -63,5 +59,17 @@ public class UserController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new GenericResponseDTO(SUCCESS_PASSWORD_RESET_LINK_SENT));
+  }
+
+  @PutMapping("/reset-password")
+  public ResponseEntity<GenericResponseDTO> resetPassword(
+      @RequestHeader(AUTH_COOKIE_NAME) String authToken, @RequestBody ResetPasswordDTO requestBody)
+      throws BadRequestException {
+    ResponseCookie cookie = authService.resetPassword(authToken, requestBody);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .header(HttpHeaders.LOCATION, "/")
+        .body(new GenericResponseDTO(SUCCESS_PASSWORD_RESET));
   }
 }

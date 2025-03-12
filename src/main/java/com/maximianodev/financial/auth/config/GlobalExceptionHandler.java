@@ -1,5 +1,6 @@
 package com.maximianodev.financial.auth.config;
 
+import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERROR_EXPIRED_TOKEN;
 import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERROR_GENERIC;
 
 import com.maximianodev.financial.auth.dto.GenericResponseDTO;
@@ -16,22 +17,24 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(BadRequestException.class)
-  public ResponseEntity<GenericResponseDTO> handleBadRequestException(BadRequestException exception) {
+  public ResponseEntity<GenericResponseDTO> handleBadRequestException(
+      BadRequestException exception) {
     GenericResponseDTO errorResponse = new GenericResponseDTO(exception.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
   @ExceptionHandler(ExpiredJwtException.class)
-  public ResponseEntity<GenericResponseDTO> handleExpiredJwtException(ExpiredJwtException exception) {
-    GenericResponseDTO errorResponse = new GenericResponseDTO(exception.getMessage());
+  public ResponseEntity<GenericResponseDTO> handleExpiredJwtException(
+      ExpiredJwtException exception) {
+    GenericResponseDTO errorResponse = new GenericResponseDTO(ERROR_EXPIRED_TOKEN);
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
   }
 
   @ExceptionHandler(JwtException.class)
   public ResponseEntity<GenericResponseDTO> handleJwtException(JwtException exception) {
-    GenericResponseDTO errorResponse = new GenericResponseDTO(exception.getMessage());
+    GenericResponseDTO errorResponse = new GenericResponseDTO(ERROR_GENERIC);
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
   }
@@ -44,8 +47,8 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 
-  @ExceptionHandler
-  public ResponseEntity<GenericResponseDTO> handleInternalServerErrorException(Exception exception) {
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<GenericResponseDTO> handleGenericException(Exception exception) {
     GenericResponseDTO errorResponse = new GenericResponseDTO(ERROR_GENERIC);
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);

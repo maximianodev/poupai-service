@@ -1,18 +1,19 @@
 package com.maximianodev.financial.auth.service;
 
+import static com.maximianodev.financial.auth.utils.Constants.Cookies.*;
 import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERROR_BAD_REQUEST;
 import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERROR_INVALID_EMAIL;
 import static com.maximianodev.financial.auth.utils.FieldsValidator.validateLoginFields;
 import static com.maximianodev.financial.auth.utils.FieldsValidator.validateRegisterFields;
 
 import com.maximianodev.financial.auth.dto.EmailDTO;
+import com.maximianodev.financial.auth.dto.ResetPasswordDTO;
 import com.maximianodev.financial.auth.dto.UserDTO;
 import com.maximianodev.financial.auth.dto.UserLoginDTO;
 import com.maximianodev.financial.auth.exception.BadRequestException;
 import com.maximianodev.financial.auth.model.User;
 import com.maximianodev.financial.auth.repository.UserRepository;
 import com.maximianodev.financial.auth.utils.FieldsValidator;
-import java.time.Duration;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -58,10 +59,10 @@ public class AuthService {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
-    boolean isPasswordValid =
+    boolean isValidPassword =
         new BCryptPasswordEncoder().matches(userLoginDTO.getPassword(), user.getPassword());
 
-    if (!isPasswordValid) {
+    if (!isValidPassword) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
@@ -90,12 +91,38 @@ public class AuthService {
     emailService.recoverPassword(user.getEmail());
   }
 
+  public ResponseCookie resetPassword(String token, ResetPasswordDTO requestBody)
+      throws BadRequestException {
+    String email = jwtService.getSubject(token);
+
+    if (email == null) {
+      throw new BadRequestException(ERROR_BAD_REQUEST);
+    }
+
+    User user = userRepository.findByEmail(email);
+
+    if (user == null) {
+      throw new BadRequestException(ERROR_BAD_REQUEST);
+    }
+
+    if (FieldsValidator.isPasswordValid(requestBody.getPassword())) {
+      throw new BadRequestException(ERROR_BAD_REQUEST);
+    }
+
+    String password = new BCryptPasswordEncoder().encode(requestBody.getPassword());
+    user.setPassword(password);
+
+    userRepository.save(user);
+
+    return createResponseCookie(jwtService.generateToken(user.getEmail()));
+  }
+
   private ResponseCookie createResponseCookie(String token) {
-    return ResponseCookie.from("Authorization", token)
-        .httpOnly(true)
+    return ResponseCookie.from(AUTH_COOKIE_NAME, token)
+        .httpOnly(AUTH_COOKIE_HTTP_ONLY)
         .secure(true)
-        .path("/")
-        .maxAge(Duration.ofDays(1).getSeconds())
+        .path(AUTH_COOKIE_PATH)
+        .maxAge(AUTH_COOKIE_MAX_AGE)
         .build();
   }
 }
