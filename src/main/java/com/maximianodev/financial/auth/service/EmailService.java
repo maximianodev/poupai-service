@@ -5,7 +5,6 @@ import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERRO
 
 import com.maximianodev.financial.auth.config.MailConfig;
 import com.maximianodev.financial.auth.exception.InternalServerErrorException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +13,13 @@ public class EmailService {
   @Value("${spring.application.url}")
   private String applicationUrl;
 
-  @Autowired private JwtService jwtService;
-  @Autowired private MailConfig mailConfig;
+  private final JwtService jwtService;
+  private final MailConfig mailConfig;
+
+  public EmailService(JwtService jwtService, MailConfig mailConfig) {
+    this.jwtService = jwtService;
+    this.mailConfig = mailConfig;
+  }
 
   public void recoverPassword(String email) throws InternalServerErrorException {
     String jwtToken = jwtService.generateToken(email);

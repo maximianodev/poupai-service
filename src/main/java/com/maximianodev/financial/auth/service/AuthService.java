@@ -13,16 +13,22 @@ import com.maximianodev.financial.auth.model.User;
 import com.maximianodev.financial.auth.repository.UserRepository;
 import com.maximianodev.financial.auth.utils.FieldsValidator;
 import java.time.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-  @Autowired private UserRepository userRepository;
-  @Autowired private JwtService jwtService;
-  @Autowired private EmailService emailService;
+  private final UserRepository userRepository;
+  private final JwtService jwtService;
+  private final EmailService emailService;
+
+  public AuthService(
+      UserRepository userRepository, JwtService jwtService, EmailService emailService) {
+    this.userRepository = userRepository;
+    this.jwtService = jwtService;
+    this.emailService = emailService;
+  }
 
   public ResponseCookie registerUser(UserDTO userDTO) throws BadRequestException {
     validateRegisterFields(userDTO);

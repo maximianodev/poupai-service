@@ -15,8 +15,14 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UserControllerTest {
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
+  private final MockMvc mockMvc;
+  private final ObjectMapper objectMapper;
+
+  @Autowired
+  public UserControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
+    this.mockMvc = mockMvc;
+    this.objectMapper = objectMapper;
+  }
 
   @Test
   void shouldReturnBadRequestForInvalidEmail() throws Exception {

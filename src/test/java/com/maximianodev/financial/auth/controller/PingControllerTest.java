@@ -12,8 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class PingControllerTest {
+  private final MockMvc mockMvc;
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  public PingControllerTest(MockMvc mockMvc) {
+    this.mockMvc = mockMvc;
+  }
 
   @Test
   void ping() throws Exception {
