@@ -1,0 +1,60 @@
+name: 'CodeQL Java Advanced'
+
+on:
+  push:
+    branches: ['main', 'develop']
+  pull_request:
+    branches: ['main', 'develop']
+  schedule:
+    - cron: '30 13 * * 6' # Executa às 13:30 UTC de todo sábado
+
+jobs:
+  analyze:
+    name: Analyze Java
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: java-kotlin
+            build-mode: autobuild # Usa autobuild para Java (pode ser 'manual' se precisar de build personalizado)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17' # Ajuste para a versão do seu projeto
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Autobuild (or Manual Build)
+        if: matrix.build-mode == 'autobuild'
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Manual Build (if needed)
+        if: matrix.build-mode == 'manual'
+        shell: bash
+        run: |
+          echo "Building the project manually..."
+          # Adicione seus comandos de build aqui, por exemplo:
+          mvn clean install -DskipTests # Ou gradle build
+          echo "Build completed."
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{matrix.language}}'
