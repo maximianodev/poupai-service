@@ -11,6 +11,8 @@ public class Constants {
     public static final String ERROR_INVALID_NAME = "Invalid Name";
     public static final String ERROR_SENDING_EMAIL = "Error sending email";
     public static final String ERROR_EXPIRED_TOKEN = "Token has expired";
+    public static final String ERROR_INVALID_TOKEN = "Invalid JWT token";
+    public static final String ERROR_INVALID_COOKIE_TOKEN = "Authorization cookie not found";
   }
 
   public static class SuccessMessages {
@@ -30,7 +32,8 @@ public class Constants {
   public static class Cookies {
     public static final String AUTH_COOKIE_NAME = "Authorization";
     public static final String AUTH_COOKIE_PATH = "/";
-    public static final boolean AUTH_COOKIE_HTTP_ONLY = true;
+    public static final boolean AUTH_COOKIE_HTTP_ONLY = false;
+    public static final boolean AUTH_COOKIE_SECURE = false;
     public static final long AUTH_COOKIE_MAX_AGE = Duration.ofDays(1).getSeconds();
   }
 }

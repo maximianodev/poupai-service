@@ -18,7 +18,7 @@ public class JwtService {
     return Jwts.builder()
         .subject(subject)
         .issuedAt(new Date())
-        .expiration(Date.from(Instant.now().plus(0, ChronoUnit.DAYS)))
+        .expiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
         .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
         .compact();
   }

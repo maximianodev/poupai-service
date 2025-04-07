@@ -4,8 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maximianodev.financial.auth.dto.UserDTO;
-import com.maximianodev.financial.auth.dto.UserLoginDTO;
+import com.maximianodev.financial.auth.dto.RegisterRequestDTO;
+import com.maximianodev.financial.auth.dto.AuthRequestDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,11 +26,11 @@ public class UserControllerTest {
 
   @Test
   void shouldReturnBadRequestForInvalidEmail() throws Exception {
-    UserDTO userDTO = new UserDTO();
-    userDTO.setEmail("invalid-email");
-    userDTO.setName("Test");
-    userDTO.setPassword("Test@123");
-    String user = objectMapper.writeValueAsString(userDTO);
+    RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO();
+    registerRequestDTO.setEmail("invalid-email");
+    registerRequestDTO.setName("Test");
+    registerRequestDTO.setPassword("Test@123");
+    String user = objectMapper.writeValueAsString(registerRequestDTO);
 
     mockMvc
         .perform(post("/api/users/register").contentType("application/json").content(user))
@@ -39,11 +39,11 @@ public class UserControllerTest {
 
   @Test
   void shouldReturnBadRequestForEmptyName() throws Exception {
-    UserDTO userDTO = new UserDTO();
-    userDTO.setEmail("test@test.com");
-    userDTO.setName("");
-    userDTO.setPassword("Test@123");
-    String user = objectMapper.writeValueAsString(userDTO);
+    RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO();
+    registerRequestDTO.setEmail("test@test.com");
+    registerRequestDTO.setName("");
+    registerRequestDTO.setPassword("Test@123");
+    String user = objectMapper.writeValueAsString(registerRequestDTO);
 
     mockMvc
         .perform(post("/api/users/register").contentType("application/json").content(user))
@@ -52,11 +52,11 @@ public class UserControllerTest {
 
   @Test
   void shouldReturnBadRequestForWeakPassword() throws Exception {
-    UserDTO userDTO = new UserDTO();
-    userDTO.setEmail("test@test.com");
-    userDTO.setName("Test");
-    userDTO.setPassword("123");
-    String user = objectMapper.writeValueAsString(userDTO);
+    RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO();
+    registerRequestDTO.setEmail("test@test.com");
+    registerRequestDTO.setName("Test");
+    registerRequestDTO.setPassword("123");
+    String user = objectMapper.writeValueAsString(registerRequestDTO);
 
     mockMvc
         .perform(post("/api/users/register").contentType("application/json").content(user))
@@ -65,10 +65,10 @@ public class UserControllerTest {
 
   @Test
   void shouldReturnBadRequestForInvalidLoginEmail() throws Exception {
-    UserLoginDTO userLoginDTO = new UserLoginDTO();
-    userLoginDTO.setEmail("invalid-email");
-    userLoginDTO.setPassword("Test@123");
-    String userLogin = objectMapper.writeValueAsString(userLoginDTO);
+    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+    authRequestDTO.setEmail("invalid-email");
+    authRequestDTO.setPassword("Test@123");
+    String userLogin = objectMapper.writeValueAsString(authRequestDTO);
 
     mockMvc
         .perform(post("/api/users/login").contentType("application/json").content(userLogin))
@@ -77,10 +77,10 @@ public class UserControllerTest {
 
   @Test
   void shouldReturnBadRequestForEmptyPassword() throws Exception {
-    UserLoginDTO userLoginDTO = new UserLoginDTO();
-    userLoginDTO.setEmail("test@test.com");
-    userLoginDTO.setPassword("");
-    String userLogin = objectMapper.writeValueAsString(userLoginDTO);
+    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+    authRequestDTO.setEmail("test@test.com");
+    authRequestDTO.setPassword("");
+    String userLogin = objectMapper.writeValueAsString(authRequestDTO);
 
     mockMvc
         .perform(post("/api/users/login").contentType("application/json").content(userLogin))
@@ -89,10 +89,10 @@ public class UserControllerTest {
 
   @Test
   void shouldReturnBadRequestForEmptyEmail() throws Exception {
-    UserLoginDTO userLoginDTO = new UserLoginDTO();
-    userLoginDTO.setEmail("");
-    userLoginDTO.setPassword("Test@123");
-    String userLogin = objectMapper.writeValueAsString(userLoginDTO);
+    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+    authRequestDTO.setEmail("");
+    authRequestDTO.setPassword("Test@123");
+    String userLogin = objectMapper.writeValueAsString(authRequestDTO);
 
     mockMvc
         .perform(post("/api/users/login").contentType("application/json").content(userLogin))

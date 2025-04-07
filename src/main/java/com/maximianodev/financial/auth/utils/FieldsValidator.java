@@ -1,7 +1,7 @@
 package com.maximianodev.financial.auth.utils;
 
-import com.maximianodev.financial.auth.dto.UserDTO;
-import com.maximianodev.financial.auth.dto.UserLoginDTO;
+import com.maximianodev.financial.auth.dto.RegisterRequestDTO;
+import com.maximianodev.financial.auth.dto.AuthRequestDTO;
 import com.maximianodev.financial.auth.exception.BadRequestException;
 
 import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.*;
@@ -19,7 +19,7 @@ public class FieldsValidator {
     return name.matches("^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");
   }
 
-  public static void validateLoginFields(UserLoginDTO user) throws BadRequestException {
+  public static void validateLoginFields(AuthRequestDTO user) throws BadRequestException {
     if (FieldsValidator.isEmailValid(user.getEmail())) {
       throw new BadRequestException(ERROR_INVALID_EMAIL);
     }
@@ -28,7 +28,7 @@ public class FieldsValidator {
     }
   }
 
-  public static void validateRegisterFields(UserDTO user) throws BadRequestException {
+  public static void validateRegisterFields(RegisterRequestDTO user) throws BadRequestException {
     if (FieldsValidator.isEmailValid(user.getEmail())) {
       throw new BadRequestException(ERROR_INVALID_EMAIL);
     }

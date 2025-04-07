@@ -1,19 +1,16 @@
 package com.maximianodev.financial.auth.service;
 
 import static com.maximianodev.financial.auth.utils.Constants.Cookies.*;
-import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERROR_BAD_REQUEST;
-import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.ERROR_INVALID_EMAIL;
+import static com.maximianodev.financial.auth.utils.Constants.ErrorMessages.*;
 import static com.maximianodev.financial.auth.utils.FieldsValidator.validateLoginFields;
 import static com.maximianodev.financial.auth.utils.FieldsValidator.validateRegisterFields;
 
-import com.maximianodev.financial.auth.dto.EmailDTO;
-import com.maximianodev.financial.auth.dto.ResetPasswordDTO;
-import com.maximianodev.financial.auth.dto.UserDTO;
-import com.maximianodev.financial.auth.dto.UserLoginDTO;
+import com.maximianodev.financial.auth.dto.*;
 import com.maximianodev.financial.auth.exception.BadRequestException;
 import com.maximianodev.financial.auth.model.User;
 import com.maximianodev.financial.auth.repository.UserRepository;
 import com.maximianodev.financial.auth.utils.FieldsValidator;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,18 +28,19 @@ public class AuthService {
     this.emailService = emailService;
   }
 
-  public ResponseCookie registerUser(UserDTO userDTO) throws BadRequestException {
-    validateRegisterFields(userDTO);
+  public ResponseCookie registerUser(final RegisterRequestDTO registerRequestDTO)
+      throws BadRequestException {
+    validateRegisterFields(registerRequestDTO);
 
-    if (userRepository.existsByEmail(userDTO.getEmail())) {
+    if (userRepository.existsByEmail(registerRequestDTO.getEmail())) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
-    String password = new BCryptPasswordEncoder().encode(userDTO.getPassword());
+    final String password = new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword());
 
     User user = new User();
-    user.setName(userDTO.getName());
-    user.setEmail(userDTO.getEmail());
+    user.setName(registerRequestDTO.getName());
+    user.setEmail(registerRequestDTO.getEmail());
     user.setPassword(password);
 
     userRepository.save(user);
@@ -50,39 +48,40 @@ public class AuthService {
     return createResponseCookie(jwtService.generateToken(user.getEmail()));
   }
 
-  public ResponseCookie loginUser(UserLoginDTO userLoginDTO) throws BadRequestException {
-    validateLoginFields(userLoginDTO);
+  public UserDataDTO loginUser(final AuthRequestDTO authRequestDTO) throws BadRequestException {
+    validateLoginFields(authRequestDTO);
 
-    User user = userRepository.findByEmail(userLoginDTO.getEmail());
+    final User user = userRepository.findByEmail(authRequestDTO.getEmail());
 
     if (user == null) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
-    boolean isValidPassword =
-        new BCryptPasswordEncoder().matches(userLoginDTO.getPassword(), user.getPassword());
+    final boolean isValidPassword =
+        new BCryptPasswordEncoder().matches(authRequestDTO.getPassword(), user.getPassword());
 
     if (!isValidPassword) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
-    String jwtToken = jwtService.generateToken(user.getEmail());
-
-    return createResponseCookie(jwtToken);
+    return new UserDataDTO(
+        user.getName(),
+        user.getEmail(),
+        createResponseCookie(jwtService.generateToken(user.getEmail())));
   }
 
   public ResponseCookie logoutUser() {
     return createResponseCookie("");
   }
 
-  public void forgotPassword(EmailDTO request) throws BadRequestException {
-    String email = request.getEmail();
+  public void forgotPassword(final ForgotPasswordRequestDTO request) throws BadRequestException {
+    final String email = request.getEmail();
 
     if (FieldsValidator.isEmailValid(email)) {
       throw new BadRequestException(ERROR_INVALID_EMAIL);
     }
 
-    User user = userRepository.findByEmail(email);
+    final User user = userRepository.findByEmail(email);
 
     if (user == null) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
@@ -91,15 +90,15 @@ public class AuthService {
     emailService.recoverPassword(user.getEmail());
   }
 
-  public ResponseCookie resetPassword(String token, ResetPasswordDTO requestBody)
+  public ResponseCookie resetPassword(final String token, final AuthRequestDTO requestBody)
       throws BadRequestException {
-    String email = jwtService.getSubject(token);
+    final String email = jwtService.getSubject(token);
 
     if (email == null) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
-    User user = userRepository.findByEmail(email);
+    final User user = userRepository.findByEmail(email);
 
     if (user == null) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
@@ -109,7 +108,7 @@ public class AuthService {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
-    String password = new BCryptPasswordEncoder().encode(requestBody.getPassword());
+    final String password = new BCryptPasswordEncoder().encode(requestBody.getPassword());
     user.setPassword(password);
 
     userRepository.save(user);
@@ -117,10 +116,22 @@ public class AuthService {
     return createResponseCookie(jwtService.generateToken(user.getEmail()));
   }
 
-  private ResponseCookie createResponseCookie(String token) {
+  public void validateUserLoggedIn(final String token) throws JwtException {
+    if (token == null || token.isEmpty()) {
+      throw new JwtException(ERROR_INVALID_TOKEN);
+    }
+
+    final String email = jwtService.getSubject(token);
+
+    if (email == null) {
+      throw new JwtException(ERROR_INVALID_TOKEN);
+    }
+  }
+
+  private ResponseCookie createResponseCookie(final String token) {
     return ResponseCookie.from(AUTH_COOKIE_NAME, token)
         .httpOnly(AUTH_COOKIE_HTTP_ONLY)
-        .secure(true)
+        .secure(AUTH_COOKIE_SECURE)
         .path(AUTH_COOKIE_PATH)
         .maxAge(AUTH_COOKIE_MAX_AGE)
         .build();

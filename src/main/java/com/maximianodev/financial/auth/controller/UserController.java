@@ -7,10 +7,8 @@ import static com.maximianodev.financial.auth.utils.Constants.SuccessMessages.SU
 import com.maximianodev.financial.auth.dto.*;
 import com.maximianodev.financial.auth.exception.BadRequestException;
 import com.maximianodev.financial.auth.service.AuthService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import io.jsonwebtoken.JwtException;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,9 +21,9 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<GenericResponseDTO> register(@RequestBody UserDTO userDTO)
-      throws BadRequestException {
-    ResponseCookie cookie = authService.registerUser(userDTO);
+  public ResponseEntity<GenericResponseDTO> register(
+      @RequestBody RegisterRequestDTO registerRequestDTO) throws BadRequestException {
+    ResponseCookie cookie = authService.registerUser(registerRequestDTO);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -33,13 +31,15 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<GenericResponseDTO> login(@RequestBody UserLoginDTO userLoginDTO)
+  public ResponseEntity<GenericResponseDTO> login(@RequestBody AuthRequestDTO authRequestDTO)
       throws BadRequestException {
-    ResponseCookie cookie = authService.loginUser(userLoginDTO);
+    final UserDataDTO data = authService.loginUser(authRequestDTO);
+    final String token = data.getToken().toString();
+    final UserProfileDTO userProfile = new UserProfileDTO(data.getName(), data.getEmail());
 
     return ResponseEntity.status(HttpStatus.OK)
-        .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(new GenericResponseDTO(SUCCESS_USER_LOGGED_IN));
+        .header(HttpHeaders.SET_COOKIE, token)
+        .body(new UserResponseDataDTO(SUCCESS_USER_LOGGED_IN, userProfile));
   }
 
   @PostMapping("/logout")
@@ -53,8 +53,8 @@ public class UserController {
   }
 
   @PostMapping("/forgot-password")
-  public ResponseEntity<GenericResponseDTO> forgotPassword(@RequestBody EmailDTO request)
-      throws BadRequestException {
+  public ResponseEntity<GenericResponseDTO> forgotPassword(
+      @RequestBody ForgotPasswordRequestDTO request) throws BadRequestException {
     authService.forgotPassword(request);
 
     return ResponseEntity.status(HttpStatus.OK)
@@ -63,7 +63,7 @@ public class UserController {
 
   @PutMapping("/reset-password")
   public ResponseEntity<GenericResponseDTO> resetPassword(
-      @RequestHeader(AUTH_COOKIE_NAME) String authToken, @RequestBody ResetPasswordDTO requestBody)
+      @CookieValue(AUTH_COOKIE_NAME) String authToken, @RequestBody AuthRequestDTO requestBody)
       throws BadRequestException {
     ResponseCookie cookie = authService.resetPassword(authToken, requestBody);
 
@@ -71,5 +71,15 @@ public class UserController {
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
         .header(HttpHeaders.LOCATION, "/")
         .body(new GenericResponseDTO(SUCCESS_PASSWORD_RESET));
+  }
+
+  @PostMapping("/validate-token")
+  public ResponseEntity<GenericResponseDTO> validateToken(
+      @CookieValue(AUTH_COOKIE_NAME) final String authToken) throws JwtException {
+    authService.validateUserLoggedIn(authToken);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .header(HttpHeaders.SET_COOKIE, authToken)
+        .body(new GenericResponseDTO(SUCCESS_USER_LOGGED_IN));
   }
 }
