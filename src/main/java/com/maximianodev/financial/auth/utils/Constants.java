@@ -18,7 +18,6 @@ public class Constants {
   public static class SuccessMessages {
     public static final String SUCCESS_USER_REGISTERED = "User registered successfully";
     public static final String SUCCESS_USER_LOGGED_IN = "User logged in successfully";
-    public static final String SUCCESS_USER_LOGGED_OUT = "User logged out successfully";
     public static final String SUCCESS_PASSWORD_RESET_LINK_SENT =
         "Password reset link sent to your email";
     public static final String SUCCESS_PASSWORD_RESET = "Password reset successfully";
@@ -32,8 +31,8 @@ public class Constants {
   public static class Cookies {
     public static final String AUTH_COOKIE_NAME = "Authorization";
     public static final String AUTH_COOKIE_PATH = "/";
-    public static final boolean AUTH_COOKIE_HTTP_ONLY = false;
-    public static final boolean AUTH_COOKIE_SECURE = false;
+    public static final boolean AUTH_COOKIE_HTTP_ONLY = true;
+    public static final boolean AUTH_COOKIE_SECURE = true;
     public static final long AUTH_COOKIE_MAX_AGE = Duration.ofDays(1).getSeconds();
   }
 }
