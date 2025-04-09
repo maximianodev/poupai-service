@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 @Getter
 public class GenericResponseDTO {
-  private final LocalDateTime timestamp;
+  private final String timestamp;
   private final String message;
 
   public GenericResponseDTO(String message) {
-    this.timestamp = LocalDateTime.now();
+    this.timestamp = LocalDateTime.now().toString();
     this.message = message;
   }
 }

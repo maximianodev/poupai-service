@@ -7,7 +7,10 @@ import static com.maximianodev.financial.auth.utils.Constants.SuccessMessages.SU
 import com.maximianodev.financial.auth.dto.*;
 import com.maximianodev.financial.auth.exception.BadRequestException;
 import com.maximianodev.financial.auth.service.AuthService;
+import com.maximianodev.financial.auth.utils.Constants;
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +39,6 @@ public class UserController {
       @RequestBody AuthRequestDTO authRequestDTO, HttpServletResponse response)
       throws BadRequestException {
     final UserProfileDTO data = authService.loginUser(authRequestDTO, response);
-
     return ResponseEntity.status(HttpStatus.OK)
         .body(new UserResponseDataDTO(SUCCESS_USER_LOGGED_IN, data));
   }
@@ -52,7 +54,7 @@ public class UserController {
 
   @PutMapping("/reset-password")
   public ResponseEntity<GenericResponseDTO> resetPassword(
-      @CookieValue(AUTH_COOKIE_NAME) String authToken,
+      @CookieValue(value = AUTH_COOKIE_NAME) String authToken,
       @RequestBody AuthRequestDTO requestBody,
       HttpServletResponse response)
       throws BadRequestException {
@@ -63,10 +65,12 @@ public class UserController {
   }
 
   @PostMapping("/validate-token")
-  public ResponseEntity<GenericResponseDTO> validateToken(
-      @CookieValue(AUTH_COOKIE_NAME) final String authToken) throws JwtException {
-    authService.validateUserLoggedIn(authToken);
+  public ResponseEntity<GenericResponseDTO> validateToken(HttpServletRequest request)
+      throws JwtException {
+    Cookie[] cookies = request.getCookies();
+    String Authorization = Constants.Cookies.getCookieValue(cookies, AUTH_COOKIE_NAME);
 
+    authService.validateUserLoggedIn(Authorization);
     return ResponseEntity.status(HttpStatus.OK)
         .body(new GenericResponseDTO(SUCCESS_USER_LOGGED_IN));
   }

@@ -131,7 +131,7 @@ public class AuthService {
     }
   }
 
-  private void createResponseCookie(final String token, HttpServletResponse response) {
+  private static void createResponseCookie(final String token, HttpServletResponse response) {
     Cookie jwtCookie = new Cookie(AUTH_COOKIE_NAME, token);
     jwtCookie.setHttpOnly(AUTH_COOKIE_HTTP_ONLY);
     jwtCookie.setSecure(AUTH_COOKIE_SECURE);

@@ -1,5 +1,7 @@
 package com.maximianodev.financial.auth.utils;
 
+import jakarta.servlet.http.Cookie;
+
 import java.time.Duration;
 
 public class Constants {
@@ -34,5 +36,18 @@ public class Constants {
     public static final boolean AUTH_COOKIE_HTTP_ONLY = true;
     public static final boolean AUTH_COOKIE_SECURE = true;
     public static final long AUTH_COOKIE_MAX_AGE = Duration.ofDays(1).getSeconds();
+
+    public static String getCookieValue(Cookie[] cookies, String cookieName) {
+      if (cookies == null) {
+        return null;
+      }
+
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals(cookieName)) {
+          return cookie.getValue();
+        }
+      }
+      return null;
+    }
   }
 }
