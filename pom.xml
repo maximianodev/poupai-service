@@ -8,10 +8,10 @@
         <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.lmaximiano</groupId>
-    <artifactId>financial-auth</artifactId>
+    <groupId>com.maximianodev</groupId>
+    <artifactId>poupai-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>financial-auth</name>
+    <name>poupai-service</name>
     <description>Financial system auth</description>
     <url/>
     <licenses>
