@@ -37,7 +37,9 @@ public class AuthService {
       throws BadRequestException {
     validateRegisterFields(signUpRequestDTO);
 
-    if (userRepository.existsByEmail(signUpRequestDTO.getEmail())) {
+    boolean userExists = userRepository.findByEmail(signUpRequestDTO.getEmail()) != null;
+
+    if (userExists) {
       throw new BadRequestException(ERROR_BAD_REQUEST);
     }
 
