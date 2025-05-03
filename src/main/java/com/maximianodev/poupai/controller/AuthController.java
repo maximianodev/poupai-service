@@ -1,8 +1,10 @@
 package com.maximianodev.poupai.controller;
 
 import static com.maximianodev.poupai.utils.Constants.Cookies.AUTH_COOKIE_NAME;
-import static com.maximianodev.poupai.utils.Constants.SuccessMessages.*;
 import static com.maximianodev.poupai.utils.Constants.SuccessMessages.SUCCESS_PASSWORD_RESET;
+import static com.maximianodev.poupai.utils.Constants.SuccessMessages.SUCCESS_PASSWORD_RESET_LINK_SENT;
+import static com.maximianodev.poupai.utils.Constants.SuccessMessages.SUCCESS_USER_LOGGED_IN;
+import static com.maximianodev.poupai.utils.Constants.SuccessMessages.SUCCESS_USER_REGISTERED;
 
 import com.maximianodev.poupai.dto.*;
 import com.maximianodev.poupai.exception.BadRequestException;
@@ -16,17 +18,17 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/auth")
+public class AuthController {
   private final AuthService authService;
 
-  public UserController(AuthService authService) {
+  public AuthController(AuthService authService) {
     this.authService = authService;
   }
 
   @PostMapping("/sign-up")
   public ResponseEntity<GenericResponseDTO> signUp(
-          @RequestBody SignUpRequestDTO signUpRequestDTO, HttpServletResponse response)
+      @RequestBody SignUpRequestDTO signUpRequestDTO, HttpServletResponse response)
       throws BadRequestException {
     final UserProfileDTO data = authService.signUp(signUpRequestDTO, response);
 
@@ -36,7 +38,7 @@ public class UserController {
 
   @PostMapping("/sign-in")
   public ResponseEntity<GenericResponseDTO> signIn(
-          @RequestBody AuthRequestDTO SignInRequestDTO, HttpServletResponse response)
+      @RequestBody AuthRequestDTO SignInRequestDTO, HttpServletResponse response)
       throws BadRequestException {
     final UserProfileDTO data = authService.signIn(SignInRequestDTO, response);
     return ResponseEntity.status(HttpStatus.OK)

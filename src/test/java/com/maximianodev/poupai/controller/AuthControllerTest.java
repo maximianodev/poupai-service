@@ -4,8 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maximianodev.poupai.dto.SignUpRequestDTO;
 import com.maximianodev.poupai.dto.AuthRequestDTO;
+import com.maximianodev.poupai.dto.SignUpRequestDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,12 +14,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+public class AuthControllerTest {
   private final MockMvc mockMvc;
   private final ObjectMapper objectMapper;
 
   @Autowired
-  public UserControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
+  public AuthControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
     this.mockMvc = mockMvc;
     this.objectMapper = objectMapper;
   }

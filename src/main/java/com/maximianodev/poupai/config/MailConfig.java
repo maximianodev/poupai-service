@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MailConfig {
-  @Value("${spring.smtp.email}")
+  @Value("${smtp.email}")
   private String email;
 
-  @Value("${spring.smtp.password}")
+  @Value("${smtp.password}")
   private String password;
 
   @Bean
